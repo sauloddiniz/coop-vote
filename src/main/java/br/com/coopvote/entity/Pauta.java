@@ -30,9 +30,20 @@ public class Pauta {
         this.aberta = aberta;
     }
 
-
     public Long getId() {
         return id;
+    }
+
+    public String getTitulo() {
+        return titulo;
+    }
+
+    public String getDescricao() {
+        return descricao;
+    }
+
+    public boolean isAberta() {
+        return aberta;
     }
 
 }

@@ -1,6 +1,7 @@
 package br.com.coopvote.controller;
 
 import br.com.coopvote.controller.api.PautaApi;
+import br.com.coopvote.dto.ListaPautaResponseDto;
 import br.com.coopvote.dto.PautaRequestDto;
 import br.com.coopvote.service.PautaService;
 import org.springframework.http.ResponseEntity;
@@ -8,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.List;
 
 @RestController
 public class PautaController implements PautaApi {
@@ -31,6 +33,12 @@ public class PautaController implements PautaApi {
 
         return ResponseEntity
                 .created(uri).build();
+    }
+
+    @Override
+    public ResponseEntity<ListaPautaResponseDto> listarPautasComFiltro(String aberta) {
+        ListaPautaResponseDto pautaResponseDto = pautaService.listarPautas(aberta);
+        return ResponseEntity.ok(pautaResponseDto);
     }
 
 }
