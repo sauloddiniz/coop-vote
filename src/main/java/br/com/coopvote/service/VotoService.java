@@ -38,7 +38,7 @@ public class VotoService {
         Pauta pauta = pautaRepository.findById(request.pautaId())
                 .orElseThrow(() -> new PautaNaoEncontradaException("Pauta não encontrada com ID: " + request.pautaId()));
 
-        if (!pauta.isAberta()) {
+        if (isPautaFechada(pauta)) {
             throw new PautaFechadaException("Não é possível votar em uma pauta fechada.");
         }
 
@@ -51,5 +51,9 @@ public class VotoService {
         Voto voto = new Voto(pauta, request.associadoId(), request.escolha());
         VotoQueue votoQueue = new VotoQueue(voto, sessao);
         rabbitTemplate.convertAndSend(VOTO_QUEUE, votoQueue);
+    }
+
+    private static boolean isPautaFechada(Pauta pauta) {
+        return !pauta.isAberta();
     }
 }
