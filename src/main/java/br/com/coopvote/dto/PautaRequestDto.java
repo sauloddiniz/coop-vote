@@ -11,7 +11,7 @@ public record PautaRequestDto(
         String descricao
 ) {
 
-    public Pauta toEntity() {
-        return new Pauta(descricao, titulo);
+    public Pauta createEntityToSave() {
+        return new Pauta(descricao, titulo, true);
     }
 }

@@ -14,6 +14,7 @@ public class Pauta {
     private Long id;
     private String titulo;
     private String descricao;
+    private boolean aberta;
 
     public Pauta() {
     }
@@ -22,6 +23,13 @@ public class Pauta {
         this.descricao = descricao;
         this.titulo = titulo;
     }
+
+    public Pauta(String descricao, String titulo, boolean aberta) {
+        this.descricao = descricao;
+        this.titulo = titulo;
+        this.aberta = aberta;
+    }
+
 
     public Long getId() {
         return id;

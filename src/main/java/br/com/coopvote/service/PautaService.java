@@ -22,7 +22,7 @@ public class PautaService {
                 .ifPresent(pautaExistente -> {
                     throw new PautaExistenteException("Pauta com título '" + pautaRequest.titulo() + "' já existe.");
                 });
-        final Pauta pauta = pautaRepository.save(pautaRequest.toEntity());
+        final Pauta pauta = pautaRepository.save(pautaRequest.createEntityToSave());
         return pauta.getId();
     }
 

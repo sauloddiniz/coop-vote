@@ -29,7 +29,7 @@ class PautaServiceTest {
     @DisplayName("Deve salvar uma pauta com sucesso")
     void deveSalvarPautaComSucesso() {
         PautaRequestDto request = new PautaRequestDto("Título da Pauta", "Descrição da Pauta");
-        Pauta pautaSalva = request.toEntity();
+        Pauta pautaSalva = request.createEntityToSave();
         ReflectionTestUtils.setField(pautaSalva, "id", 1L);
 
         when(pautaRepository.findByTituloIgnoreCase(request.titulo())).thenReturn(null);
