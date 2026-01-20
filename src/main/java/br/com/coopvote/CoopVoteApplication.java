@@ -8,7 +8,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
 @EnableScheduling
-public class CoopVoteApplication implements CommandLineRunner {
+public class CoopVoteApplication {
 
     private final FecharPautas fecharPautas;
 
@@ -20,8 +20,4 @@ public class CoopVoteApplication implements CommandLineRunner {
         SpringApplication.run(CoopVoteApplication.class, args);
     }
 
-    @Override
-    public void run(String... args) throws Exception {
-        fecharPautas.executarFechamentoDePautas();
-    }
 }

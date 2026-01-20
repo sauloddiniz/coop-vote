@@ -1,5 +1,6 @@
 package br.com.coopvote.controller;
 
+import br.com.coopvote.agendamentos.FecharPautas;
 import br.com.coopvote.dto.SessaoVotacaoRequestDto;
 import br.com.coopvote.dto.SessaoVotacaoResponseDto;
 import br.com.coopvote.exceptions.PautaFechadaException;
@@ -32,6 +33,9 @@ class SessaoVotacaoControllerTest {
 
     @MockitoBean
     private SessaoVotacaoService sessaoVotacaoService;
+
+    @MockitoBean
+    private FecharPautas fecharPautas;
 
     private static final String API_URL = "/api/v1/sessao-votacao";
 
