@@ -39,3 +39,6 @@ management:
     health:
       show-details: always
       show-components: always
+  jackson:
+    date-format: yyyy-MM-dd'T'HH:mm:ss.SSS'Z'
+    time-zone: UTC
