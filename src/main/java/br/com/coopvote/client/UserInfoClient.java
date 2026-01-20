@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 @FeignClient(name = "userInfoClient",
-        url = "https://user-info.herokuapp.com/users",
+        url = "http://localhost:8081/users",
         configuration = FeignConfig.class)
 public interface UserInfoClient {
 

@@ -22,7 +22,7 @@ public interface VotoApi {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "202", description = "Voto recebido e enviado para processamento"),
             @ApiResponse(responseCode = "400", description = "Dados da requisição inválidos"),
-            @ApiResponse(responseCode = "404", description = "Pauta não encontrada"),
+            @ApiResponse(responseCode = "404", description = "Pauta, sessão ou associado não encontrada"),
             @ApiResponse(responseCode = "500", description = "Erro interno no servidor")
     })
     @PostMapping

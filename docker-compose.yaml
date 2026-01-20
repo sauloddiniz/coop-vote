@@ -1,5 +1,14 @@
 version: '3.8'
 services:
+  ms-cpf-valid-api:
+    image: saulodias/ms-cpf-valid #Docker Hub
+    container_name: ms-cpf-valid-container
+    ports:
+      - "8081:8081"
+    restart: always
+    networks:
+      - app-network
+
   oracle-db:
     image: 'gvenzl/oracle-free:latest'
     environment:
