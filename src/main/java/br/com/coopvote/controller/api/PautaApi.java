@@ -2,6 +2,7 @@ package br.com.coopvote.controller.api;
 
 import br.com.coopvote.dto.ListaPautaResponseDto;
 import br.com.coopvote.dto.PautaRequestDto;
+import br.com.coopvote.dto.ResultadoVotacaoResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -47,5 +48,16 @@ public interface PautaApi {
                     example = "true")
             @RequestParam(required = false) String aberta);
 
-
+    @Operation(
+            summary = "Obtém o resultado da votação de uma pauta",
+            description = "Contabiliza os votos e retorna o resultado final da pauta informada."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Resultado obtido com sucesso",
+                    content = @Content(schema = @Schema(implementation = ResultadoVotacaoResponseDto.class))),
+            @ApiResponse(responseCode = "404", description = "Pauta não encontrada"),
+            @ApiResponse(responseCode = "500", description = "Erro interno no servidor")
+    })
+    @GetMapping("/{id}/resultado")
+    ResponseEntity<ResultadoVotacaoResponseDto> obterResultado(@PathVariable Long id);
 }

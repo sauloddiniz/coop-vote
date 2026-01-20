@@ -1,12 +1,15 @@
 package br.com.coopvote.service;
 
 import br.com.coopvote.client.UserInfoClient;
+import br.com.coopvote.dto.ResultadoVotacaoResponseDto;
 import br.com.coopvote.dto.UserInfoResponseDto;
 import br.com.coopvote.dto.VotoQueue;
 import br.com.coopvote.dto.VotoRequestDto;
 import br.com.coopvote.entity.Pauta;
 import br.com.coopvote.entity.SessaoVotacao;
 import br.com.coopvote.entity.Voto;
+import br.com.coopvote.enums.EscolhaVoto;
+import br.com.coopvote.enums.StatusVotacao;
 import br.com.coopvote.exceptions.*;
 import br.com.coopvote.repository.PautaRepository;
 import br.com.coopvote.repository.SessaoVotacaoRepository;
@@ -74,6 +77,27 @@ public class VotoService {
         
         log.info("Voto do associado {} para a pauta {} enviado para processamento assíncrono.", 
                 request.associadoId(), request.pautaId());
+    }
+
+    @Transactional(readOnly = true)
+    public ResultadoVotacaoResponseDto contabilizarVotos(Long pautaId) {
+        Pauta pauta = pautaRepository.findById(pautaId)
+                .orElseThrow(() -> new PautaNaoEncontradaException("Pauta não encontrada com ID: " + pautaId));
+
+        long totalSim = votoRepository.countByPautaIdAndEscolha(pautaId, EscolhaVoto.SIM);
+        long totalNao = votoRepository.countByPautaIdAndEscolha(pautaId, EscolhaVoto.NAO);
+        long totalVotos = totalSim + totalNao;
+
+        StatusVotacao statusVotacao = StatusVotacao.obterResultado(totalSim, totalNao);
+
+        return new ResultadoVotacaoResponseDto(
+                pauta.getId(),
+                pauta.getTitulo(),
+                totalSim,
+                totalNao,
+                totalVotos,
+                statusVotacao.name().replace("_", " ")
+        );
     }
 
     private void validarAssociado(String associadoId) {

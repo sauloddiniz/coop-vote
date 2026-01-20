@@ -1,6 +1,7 @@
 package br.com.coopvote.service;
 
 import br.com.coopvote.client.UserInfoClient;
+import br.com.coopvote.dto.ResultadoVotacaoResponseDto;
 import br.com.coopvote.dto.UserInfoResponseDto;
 import br.com.coopvote.dto.VotoQueue;
 import br.com.coopvote.dto.VotoRequestDto;
@@ -9,6 +10,7 @@ import br.com.coopvote.entity.SessaoVotacao;
 import br.com.coopvote.enums.EscolhaVoto;
 import br.com.coopvote.exceptions.AssociadoNaoAutorizadoException;
 import br.com.coopvote.exceptions.PautaFechadaException;
+import br.com.coopvote.exceptions.PautaNaoEncontradaException;
 import br.com.coopvote.exceptions.SessaoFechadaException;
 import br.com.coopvote.repository.PautaRepository;
 import br.com.coopvote.repository.SessaoVotacaoRepository;
@@ -155,5 +157,80 @@ class VotoServiceTest {
 
         assertEquals("Associado não autorizado a votar.", exception.getMessage());
         verifyNoInteractions(rabbitTemplate);
+    }
+
+    @Test
+    @DisplayName("Deve contabilizar votos com sucesso - APROVADA")
+    void deveContabilizarVotosAprovada() {
+        Long pautaId = 1L;
+        Pauta pauta = new Pauta(pautaId, "Desc", "Título", true);
+
+        when(pautaRepository.findById(pautaId)).thenReturn(Optional.of(pauta));
+        when(votoRepository.countByPautaIdAndEscolha(pautaId, EscolhaVoto.SIM)).thenReturn(10L);
+        when(votoRepository.countByPautaIdAndEscolha(pautaId, EscolhaVoto.NAO)).thenReturn(5L);
+
+        ResultadoVotacaoResponseDto resultado = votoService.contabilizarVotos(pautaId);
+
+        assertNotNull(resultado);
+        assertEquals(pautaId, resultado.pautaId());
+        assertEquals("Título", resultado.titulo());
+        assertEquals(10L, resultado.totalSim());
+        assertEquals(5L, resultado.totalNao());
+        assertEquals(15L, resultado.totalVotos());
+        assertEquals("APROVADA", resultado.resultado());
+    }
+
+    @Test
+    @DisplayName("Deve contabilizar votos com sucesso - REPROVADA")
+    void deveContabilizarVotosReprovada() {
+        Long pautaId = 1L;
+        Pauta pauta = new Pauta(pautaId, "Desc", "Título", true);
+
+        when(pautaRepository.findById(pautaId)).thenReturn(Optional.of(pauta));
+        when(votoRepository.countByPautaIdAndEscolha(pautaId, EscolhaVoto.SIM)).thenReturn(5L);
+        when(votoRepository.countByPautaIdAndEscolha(pautaId, EscolhaVoto.NAO)).thenReturn(10L);
+
+        ResultadoVotacaoResponseDto resultado = votoService.contabilizarVotos(pautaId);
+
+        assertEquals("REPROVADA", resultado.resultado());
+    }
+
+    @Test
+    @DisplayName("Deve contabilizar votos com sucesso - EMPATE")
+    void deveContabilizarVotosEmpate() {
+        Long pautaId = 1L;
+        Pauta pauta = new Pauta(pautaId, "Desc", "Título", true);
+
+        when(pautaRepository.findById(pautaId)).thenReturn(Optional.of(pauta));
+        when(votoRepository.countByPautaIdAndEscolha(pautaId, EscolhaVoto.SIM)).thenReturn(10L);
+        when(votoRepository.countByPautaIdAndEscolha(pautaId, EscolhaVoto.NAO)).thenReturn(10L);
+
+        ResultadoVotacaoResponseDto resultado = votoService.contabilizarVotos(pautaId);
+
+        assertEquals("EMPATE", resultado.resultado());
+    }
+
+    @Test
+    @DisplayName("Deve contabilizar votos com sucesso - SEM VOTOS")
+    void deveContabilizarVotosSemVotos() {
+        Long pautaId = 1L;
+        Pauta pauta = new Pauta(pautaId, "Desc", "Título", true);
+
+        when(pautaRepository.findById(pautaId)).thenReturn(Optional.of(pauta));
+        when(votoRepository.countByPautaIdAndEscolha(pautaId, EscolhaVoto.SIM)).thenReturn(0L);
+        when(votoRepository.countByPautaIdAndEscolha(pautaId, EscolhaVoto.NAO)).thenReturn(0L);
+
+        ResultadoVotacaoResponseDto resultado = votoService.contabilizarVotos(pautaId);
+
+        assertEquals("SEM VOTOS", resultado.resultado());
+    }
+
+    @Test
+    @DisplayName("Deve lançar exceção ao contabilizar votos de pauta inexistente")
+    void deveLancarExcecaoContabilizarPautaInexistente() {
+        Long pautaId = 1L;
+        when(pautaRepository.findById(pautaId)).thenReturn(Optional.empty());
+
+        assertThrows(PautaNaoEncontradaException.class, () -> votoService.contabilizarVotos(pautaId));
     }
 }

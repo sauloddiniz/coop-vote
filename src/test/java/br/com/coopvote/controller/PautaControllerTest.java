@@ -4,7 +4,9 @@ import br.com.coopvote.agendamentos.FecharPautas;
 import br.com.coopvote.dto.ListaPautaResponseDto;
 import br.com.coopvote.dto.PautaRequestDto;
 import br.com.coopvote.dto.PautaResponse;
+import br.com.coopvote.dto.ResultadoVotacaoResponseDto;
 import br.com.coopvote.service.PautaService;
+import br.com.coopvote.service.VotoService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -33,6 +35,9 @@ class PautaControllerTest {
 
     @MockitoBean
     private PautaService pautaService;
+
+    @MockitoBean
+    private VotoService votoService;
 
     @MockitoBean
     private FecharPautas fecharPautas;
@@ -125,5 +130,26 @@ class PautaControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.pautas_abertas[0].titulo").value("Pauta Aberta"))
                 .andExpect(jsonPath("$.pautas_encerradas").isEmpty());
+    }
+
+    @Test
+    @DisplayName("Deve obter o resultado da votação com sucesso e retornar 200")
+    void deveObterResultadoComSucesso() throws Exception {
+        Long pautaId = 1L;
+        ResultadoVotacaoResponseDto resultado = new ResultadoVotacaoResponseDto(
+                pautaId, "Pauta Teste", 10L, 5L, 15L, "APROVADA"
+        );
+
+        when(votoService.contabilizarVotos(pautaId)).thenReturn(resultado);
+
+        mockMvc.perform(get(API_URL + "/{id}/resultado", pautaId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.pautaId").value(pautaId))
+                .andExpect(jsonPath("$.titulo").value("Pauta Teste"))
+                .andExpect(jsonPath("$.totalSim").value(10))
+                .andExpect(jsonPath("$.totalNao").value(5))
+                .andExpect(jsonPath("$.totalVotos").value(15))
+                .andExpect(jsonPath("$.resultado").value("APROVADA"));
     }
 }
