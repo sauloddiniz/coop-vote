@@ -30,6 +30,13 @@ public class Pauta {
         this.aberta = aberta;
     }
 
+    public Pauta(Long idPauta, String descricaoPauta, String tituloPauta, boolean abertaPauta) {
+        this.id = idPauta;
+        this.descricao = descricaoPauta;
+        this.titulo = tituloPauta;
+        this.aberta = abertaPauta;
+    }
+
     public Long getId() {
         return id;
     }
@@ -46,4 +53,8 @@ public class Pauta {
         return aberta;
     }
 
+    public Pauta setAbertaFalse() {
+        this.aberta = false;
+        return this;
+    }
 }

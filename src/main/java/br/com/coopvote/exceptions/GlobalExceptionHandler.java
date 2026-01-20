@@ -68,4 +68,15 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.badRequest().body(errorResponse);
     }
+
+    @ExceptionHandler(SessaoFechadaException.class)
+    public ResponseEntity<ErrorResponseDto> handleSessaoFechadaException(SessaoFechadaException ex) {
+        ErrorResponseDto errorResponse = new ErrorResponseDto(
+                LocalDateTime.now(),
+                HttpStatus.BAD_REQUEST.value(),
+                ex.getMessage()
+        );
+
+        return ResponseEntity.badRequest().body(errorResponse);
+    }
 }

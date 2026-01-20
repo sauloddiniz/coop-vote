@@ -8,6 +8,8 @@ import java.util.List;
 
 @Repository
 public interface PautaRepository extends JpaRepository<Pauta, Long> {
+
     Pauta findByTituloIgnoreCase(String titulo);
+
     List<Pauta> findAllByAberta(boolean aberta);
 }

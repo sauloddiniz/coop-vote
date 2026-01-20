@@ -7,6 +7,7 @@ import br.com.coopvote.entity.Pauta;
 import br.com.coopvote.exceptions.PautaExistenteException;
 import br.com.coopvote.repository.PautaRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,6 +21,7 @@ public class PautaService {
         this.pautaRepository = pautaRepository;
     }
 
+    @Transactional
     public Long salvar(final PautaRequestDto pautaRequest) {
         Optional.ofNullable(pautaRepository.findByTituloIgnoreCase(pautaRequest.titulo()))
                 .ifPresent(pautaExistente -> {
@@ -30,6 +32,7 @@ public class PautaService {
     }
 
 
+    @Transactional(readOnly = true)
     public ListaPautaResponseDto listarPautas(String aberta) {
         List<Pauta> pautas =
                 Optional.ofNullable(aberta)
