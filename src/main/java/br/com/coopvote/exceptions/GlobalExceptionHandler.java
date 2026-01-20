@@ -46,4 +46,26 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.badRequest().body(errorResponse);
     }
+
+    @ExceptionHandler(PautaNaoEncontradaException.class)
+    public ResponseEntity<ErrorResponseDto> handlePautaNaoEncontradaException(PautaNaoEncontradaException ex) {
+        ErrorResponseDto errorResponse = new ErrorResponseDto(
+                LocalDateTime.now(),
+                HttpStatus.NOT_FOUND.value(),
+                ex.getMessage()
+        );
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+    }
+
+    @ExceptionHandler(PautaFechadaException.class)
+    public ResponseEntity<ErrorResponseDto> handlePautaFechadaException(PautaFechadaException ex) {
+        ErrorResponseDto errorResponse = new ErrorResponseDto(
+                LocalDateTime.now(),
+                HttpStatus.BAD_REQUEST.value(),
+                ex.getMessage()
+        );
+
+        return ResponseEntity.badRequest().body(errorResponse);
+    }
 }
