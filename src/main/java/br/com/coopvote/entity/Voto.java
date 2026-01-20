@@ -10,8 +10,7 @@ import java.time.LocalDateTime;
 public class Voto {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
     @ManyToOne
     @JoinColumn(name = "pauta_id", nullable = false)
     private Pauta pauta;
@@ -29,7 +28,19 @@ public class Voto {
         this.escolha = escolha;
         this.dataHoraVotacao = LocalDateTime.now();
     }
-    public Long getId() {
+
+    public Voto(Long pautaId, String associadoId, EscolhaVoto escolha) {
+        this.id = criarIdVoto(pautaId, associadoId);
+        this.associadoId = associadoId;
+        this.escolha = escolha;
+        this.dataHoraVotacao = LocalDateTime.now();
+    }
+
+    private String criarIdVoto(Long pautaId, String associadoId) {
+        return (pautaId.toString().concat("-").concat(associadoId));
+    }
+
+    public String getId() {
         return id;
     }
 
@@ -47,5 +58,9 @@ public class Voto {
 
     public LocalDateTime getDataHoraVotacao() {
         return dataHoraVotacao;
+    }
+
+    public void setPauta(Pauta pauta) {
+        this.pauta = pauta;
     }
 }

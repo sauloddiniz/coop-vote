@@ -1,5 +1,7 @@
 package br.com.coopvote.service;
 
+import br.com.coopvote.client.UserInfoClient;
+import br.com.coopvote.dto.UserInfoResponseDto;
 import br.com.coopvote.dto.VotoQueue;
 import br.com.coopvote.dto.VotoRequestDto;
 import br.com.coopvote.entity.Pauta;
@@ -9,6 +11,7 @@ import br.com.coopvote.exceptions.PautaFechadaException;
 import br.com.coopvote.exceptions.SessaoFechadaException;
 import br.com.coopvote.repository.PautaRepository;
 import br.com.coopvote.repository.SessaoVotacaoRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -35,8 +38,16 @@ class VotoServiceTest {
     @Mock
     private RabbitTemplate rabbitTemplate;
 
+    @Mock
+    private UserInfoClient userInfoClient;
+
     @InjectMocks
     private VotoService votoService;
+
+    @BeforeEach
+    void setUp() {
+        lenient().when(userInfoClient.getInfo(anyString())).thenReturn(new UserInfoResponseDto("ABLE_TO_VOTE"));
+    }
 
     @Test
     @DisplayName("Deve registrar um voto com sucesso enviando para a fila")
