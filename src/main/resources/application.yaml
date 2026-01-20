@@ -1,1 +1,44 @@
-spring.application.name=coop-vote
+spring:
+  application:
+    name: coop-vote
+  flyway:
+    enabled: true
+    schemas: COOP_VOTE
+  datasource:
+    url: jdbc:oracle:thin:@localhost:1521/FREEPDB1
+    username: coop_vote
+    password: oracle2026
+    driver-class-name: oracle.jdbc.OracleDriver
+
+  jpa:
+    database-platform: org.hibernate.dialect.OracleDialect
+    hibernate:
+      dialect: org.hibernate.dialect.Oracle12cDialect
+      ddl-auto: none
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+        default_schema: COOP_VOTE
+
+logging:
+  level:
+    br.com.coopvote.client: DEBUG
+
+management:
+  info:
+    env:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: health, info, metrics, prometheus
+      discovery:
+        enabled: true
+  endpoint:
+    health:
+      show-details: always
+      show-components: always
+  jackson:
+    date-format: yyyy-MM-dd'T'HH:mm:ss.SSS'Z'
+    time-zone: UTC
