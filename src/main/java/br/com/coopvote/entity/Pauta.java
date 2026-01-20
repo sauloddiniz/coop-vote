@@ -1,6 +1,9 @@
 package br.com.coopvote.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "pauta")
@@ -11,4 +14,17 @@ public class Pauta {
     private Long id;
     private String titulo;
     private String descricao;
+
+    public Pauta() {
+    }
+
+    public Pauta(String descricao, String titulo) {
+        this.descricao = descricao;
+        this.titulo = titulo;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
 }

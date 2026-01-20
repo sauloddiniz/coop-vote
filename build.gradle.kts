@@ -29,6 +29,8 @@ dependencies {
     implementation("org.projectlombok:lombok")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-validation") // ADICIONE ESTA LINHA
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.4")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     runtimeOnly("com.oracle.database.jdbc:ojdbc11")
     runtimeOnly("io.micrometer:micrometer-registry-prometheus")
