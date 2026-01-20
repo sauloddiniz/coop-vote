@@ -29,7 +29,6 @@ public class Voto {
         this.escolha = escolha;
         this.dataHoraVotacao = LocalDateTime.now();
     }
-
     public Long getId() {
         return id;
     }
@@ -44,5 +43,9 @@ public class Voto {
 
     public EscolhaVoto getEscolha() {
         return escolha;
+    }
+
+    public LocalDateTime getDataHoraVotacao() {
+        return dataHoraVotacao;
     }
 }

@@ -3,6 +3,7 @@ package br.com.coopvote.service;
 import br.com.coopvote.dto.VotoRequestDto;
 import br.com.coopvote.entity.Pauta;
 import br.com.coopvote.entity.SessaoVotacao;
+import br.com.coopvote.entity.Voto;
 import br.com.coopvote.enums.EscolhaVoto;
 import br.com.coopvote.exceptions.PautaFechadaException;
 import br.com.coopvote.exceptions.SessaoFechadaException;
@@ -50,7 +51,7 @@ class VotoServiceTest {
 
         assertDoesNotThrow(() -> votoService.votar(request));
 
-        verify(rabbitTemplate).convertAndSend(eq(VotoService.VOTO_QUEUE), eq(request));
+        verify(rabbitTemplate).convertAndSend(eq(VotoService.VOTO_QUEUE), any(Voto.class));
     }
 
     @Test

@@ -1,8 +1,10 @@
 package br.com.coopvote.service;
 
+import br.com.coopvote.dto.VotoQueue;
 import br.com.coopvote.dto.VotoRequestDto;
 import br.com.coopvote.entity.Pauta;
 import br.com.coopvote.entity.SessaoVotacao;
+import br.com.coopvote.entity.Voto;
 import br.com.coopvote.exceptions.PautaFechadaException;
 import br.com.coopvote.exceptions.PautaNaoEncontradaException;
 import br.com.coopvote.exceptions.SessaoFechadaException;
@@ -46,7 +48,8 @@ public class VotoService {
         if (LocalDateTime.now().isAfter(sessao.getDataFechamento())) {
             throw new SessaoFechadaException("A sessão de votação para esta pauta já expirou.");
         }
-
-        rabbitTemplate.convertAndSend(VOTO_QUEUE, request);
+        Voto voto = new Voto(pauta, request.associadoId(), request.escolha());
+        VotoQueue votoQueue = new VotoQueue(voto, sessao);
+        rabbitTemplate.convertAndSend(VOTO_QUEUE, votoQueue);
     }
 }
