@@ -6,6 +6,7 @@ import br.com.coopvote.dto.PautaRequestDto;
 import br.com.coopvote.dto.ResultadoVotacaoResponseDto;
 import br.com.coopvote.service.PautaService;
 import br.com.coopvote.service.VotoService;
+import io.micrometer.core.annotation.Timed;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -24,6 +25,7 @@ public class PautaController implements PautaApi {
     }
 
     @Override
+    @Timed("PautaController.salvarPauta")
     public ResponseEntity<Void> salvarPauta(PautaRequestDto pautaRequest) {
 
         Long id = pautaService.salvar(pautaRequest);
@@ -39,12 +41,14 @@ public class PautaController implements PautaApi {
     }
 
     @Override
+    @Timed("PautaController.listarPautasComFiltro")
     public ResponseEntity<ListaPautaResponseDto> listarPautasComFiltro(String aberta) {
         ListaPautaResponseDto pautaResponseDto = pautaService.listarPautas(aberta);
         return ResponseEntity.ok(pautaResponseDto);
     }
 
     @Override
+    @Timed("PautaController.obterResultado")
     public ResponseEntity<ResultadoVotacaoResponseDto> obterResultado(Long id) {
         ResultadoVotacaoResponseDto resultado = votoService.contabilizarVotos(id);
         return ResponseEntity.ok(resultado);

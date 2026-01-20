@@ -43,6 +43,7 @@ public class FecharPautas {
 
         if (isContemPauta(pautas)) {
             pautaRepository.saveAll(pautas);
+            log.info("Pautas fechadas com sucesso: total de {} pautas", pautas.size());
         }
     }
 

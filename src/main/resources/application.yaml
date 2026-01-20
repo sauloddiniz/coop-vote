@@ -24,3 +24,18 @@ spring:
 logging:
   level:
     br.com.coopvote.client: DEBUG
+
+management:
+  info:
+    env:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: health, info, metrics, prometheus
+      discovery:
+        enabled: true
+  endpoint:
+    health:
+      show-details: always
+      show-components: always
