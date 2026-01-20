@@ -1,17 +1,22 @@
 spring:
   application:
     name: coop-vote
+  flyway:
+    enabled: true
+    schemas: COOP_VOTE
   datasource:
     url: jdbc:oracle:thin:@localhost:1521/FREEPDB1
-    username: system
-    password: #password#
+    username: coop_vote
+    password: oracle2026
     driver-class-name: oracle.jdbc.OracleDriver
 
   jpa:
     database-platform: org.hibernate.dialect.OracleDialect
     hibernate:
-      ddl-auto: update
+      dialect: org.hibernate.dialect.Oracle12cDialect
+      ddl-auto: validate
     show-sql: true
     properties:
       hibernate:
         format_sql: true
+        default_schema: COOP_VOTE

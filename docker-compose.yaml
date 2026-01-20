@@ -1,13 +1,21 @@
+version: '3.8'
 services:
   oracle-db:
-    image: container-registry.oracle.com/database/free:latest
-    container_name: oracle-db
+    image: 'gvenzl/oracle-free:latest'
+    environment:
+      - APP_USER=coop_vote
+      - APP_USER_PASSWORD=oracle2026
+      - ORACLE_PASSWORD=oracle2026
     ports:
       - "1521:1521"
-    environment:
-      - ORACLE_PASSWORD=#password#
     volumes:
-      - oracle_data:/opt/oracle/oradata
+      - oracle-db-data:/u01/app/oracle/oradata
+    networks:
+      - app-network
 
 volumes:
-  oracle_data:
+  oracle-db-data:
+
+networks:
+  app-network:
+    driver: bridge
