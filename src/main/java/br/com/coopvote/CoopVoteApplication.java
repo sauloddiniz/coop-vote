@@ -10,12 +10,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableScheduling
 public class CoopVoteApplication {
 
-    private final FecharPautas fecharPautas;
-
-    public CoopVoteApplication(FecharPautas fecharPautas) {
-        this.fecharPautas = fecharPautas;
-    }
-
     public static void main(String[] args) {
         SpringApplication.run(CoopVoteApplication.class, args);
     }
