@@ -79,4 +79,15 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.badRequest().body(errorResponse);
     }
+
+    @ExceptionHandler(AssociadoNaoAutorizadoException.class)
+    public ResponseEntity<ErrorResponseDto> handleAssociadoNaoAutorizadoException(AssociadoNaoAutorizadoException ex) {
+        ErrorResponseDto errorResponse = new ErrorResponseDto(
+                LocalDateTime.now(),
+                HttpStatus.NOT_FOUND.value(),
+                ex.getMessage()
+        );
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+    }
 }

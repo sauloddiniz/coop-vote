@@ -1,9 +1,9 @@
 package br.com.coopvote.service;
 
+import br.com.coopvote.dto.VotoQueue;
 import br.com.coopvote.dto.VotoRequestDto;
 import br.com.coopvote.entity.Pauta;
 import br.com.coopvote.entity.SessaoVotacao;
-import br.com.coopvote.entity.Voto;
 import br.com.coopvote.enums.EscolhaVoto;
 import br.com.coopvote.exceptions.PautaFechadaException;
 import br.com.coopvote.exceptions.SessaoFechadaException;
@@ -42,7 +42,8 @@ class VotoServiceTest {
     @DisplayName("Deve registrar um voto com sucesso enviando para a fila")
     void deveRegistrarVotoComSucesso() {
         Long pautaId = 1L;
-        VotoRequestDto request = new VotoRequestDto(pautaId, "associado-1", EscolhaVoto.SIM);
+        String cpf = "12345678901";
+        VotoRequestDto request = new VotoRequestDto(pautaId, cpf, EscolhaVoto.SIM);
         Pauta pauta = new Pauta(pautaId, "Desc", "Título", true);
         SessaoVotacao sessao = new SessaoVotacao(LocalDateTime.now(), LocalDateTime.now().plusMinutes(1), pauta);
 
@@ -51,14 +52,15 @@ class VotoServiceTest {
 
         assertDoesNotThrow(() -> votoService.votar(request));
 
-        verify(rabbitTemplate).convertAndSend(eq(VotoService.VOTO_QUEUE), any(Voto.class));
+        verify(rabbitTemplate).convertAndSend(eq(VotoService.VOTO_QUEUE), any(VotoQueue.class));
     }
 
     @Test
     @DisplayName("Deve lançar exceção quando a pauta estiver com status fechada")
     void deveLancarExcecaoQuandoPautaFechadaNoStatus() {
         Long pautaId = 1L;
-        VotoRequestDto request = new VotoRequestDto(pautaId, "associado-1", EscolhaVoto.SIM);
+        String cpf = "12345678901";
+        VotoRequestDto request = new VotoRequestDto(pautaId, cpf, EscolhaVoto.SIM);
         Pauta pauta = new Pauta("Desc", "Título", false);
 
         when(pautaRepository.findById(pautaId)).thenReturn(Optional.of(pauta));
@@ -73,7 +75,8 @@ class VotoServiceTest {
     @DisplayName("Deve lançar exceção quando a sessão de votação expirou pelo tempo")
     void deveLancarExcecaoQuandoSessaoExpirouPeloTempo() {
         Long pautaId = 1L;
-        VotoRequestDto request = new VotoRequestDto(pautaId, "associado-1", EscolhaVoto.SIM);
+        String cpf = "12345678901";
+        VotoRequestDto request = new VotoRequestDto(pautaId, cpf, EscolhaVoto.SIM);
         Pauta pauta = new Pauta(pautaId, "Desc", "Título", true);
         // Sessão expirada há 1 segundo
         SessaoVotacao sessao = new SessaoVotacao(LocalDateTime.now().minusMinutes(2), LocalDateTime.now().minusSeconds(1), pauta);
@@ -91,7 +94,8 @@ class VotoServiceTest {
     @DisplayName("Deve lançar exceção quando não existe sessão para a pauta")
     void deveLancarExcecaoQuandoNaoExisteSessao() {
         Long pautaId = 1L;
-        VotoRequestDto request = new VotoRequestDto(pautaId, "associado-1", EscolhaVoto.SIM);
+        String cpf = "12345678901";
+        VotoRequestDto request = new VotoRequestDto(pautaId, cpf, EscolhaVoto.SIM);
         Pauta pauta = new Pauta(pautaId, "Desc", "Título", true);
 
         when(pautaRepository.findById(pautaId)).thenReturn(Optional.of(pauta));
