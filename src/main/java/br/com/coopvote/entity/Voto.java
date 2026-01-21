@@ -40,6 +40,11 @@ public class Voto {
         return (pautaId.toString().concat("-").concat(associadoId));
     }
 
+    @PrePersist
+    public void prePersist() {
+        id = criarIdVoto(pauta.getId(), associadoId);
+    }
+
     public String getId() {
         return id;
     }
