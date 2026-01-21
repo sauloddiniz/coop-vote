@@ -18,6 +18,8 @@ import br.com.coopvote.repository.VotoRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -159,70 +161,31 @@ class VotoServiceTest {
         verifyNoInteractions(rabbitTemplate);
     }
 
-    @Test
-    @DisplayName("Deve contabilizar votos com sucesso - APROVADA")
-    void deveContabilizarVotosAprovada() {
+    @ParameterizedTest
+    @DisplayName("Deve contabilizar votos com diferentes resultados")
+    @CsvSource({
+        "10, 5, APROVADA",
+        "5, 10, REPROVADA",
+        "10, 10, EMPATE",
+        "0, 0, SEM VOTOS"
+    })
+    void deveContabilizarVotosComSucesso(Long votosSim, Long votosNao, String resultadoEsperado) {
         Long pautaId = 1L;
         Pauta pauta = new Pauta(pautaId, "Desc", "Título", true);
 
         when(pautaRepository.findById(pautaId)).thenReturn(Optional.of(pauta));
-        when(votoRepository.countByPautaIdAndEscolha(pautaId, EscolhaVoto.SIM)).thenReturn(10L);
-        when(votoRepository.countByPautaIdAndEscolha(pautaId, EscolhaVoto.NAO)).thenReturn(5L);
+        when(votoRepository.countByPautaIdAndEscolha(pautaId, EscolhaVoto.SIM)).thenReturn(votosSim);
+        when(votoRepository.countByPautaIdAndEscolha(pautaId, EscolhaVoto.NAO)).thenReturn(votosNao);
 
         ResultadoVotacaoResponseDto resultado = votoService.contabilizarVotos(pautaId);
 
         assertNotNull(resultado);
         assertEquals(pautaId, resultado.pautaId());
         assertEquals("Título", resultado.titulo());
-        assertEquals(10L, resultado.totalSim());
-        assertEquals(5L, resultado.totalNao());
-        assertEquals(15L, resultado.totalVotos());
-        assertEquals("APROVADA", resultado.resultado());
-    }
-
-    @Test
-    @DisplayName("Deve contabilizar votos com sucesso - REPROVADA")
-    void deveContabilizarVotosReprovada() {
-        Long pautaId = 1L;
-        Pauta pauta = new Pauta(pautaId, "Desc", "Título", true);
-
-        when(pautaRepository.findById(pautaId)).thenReturn(Optional.of(pauta));
-        when(votoRepository.countByPautaIdAndEscolha(pautaId, EscolhaVoto.SIM)).thenReturn(5L);
-        when(votoRepository.countByPautaIdAndEscolha(pautaId, EscolhaVoto.NAO)).thenReturn(10L);
-
-        ResultadoVotacaoResponseDto resultado = votoService.contabilizarVotos(pautaId);
-
-        assertEquals("REPROVADA", resultado.resultado());
-    }
-
-    @Test
-    @DisplayName("Deve contabilizar votos com sucesso - EMPATE")
-    void deveContabilizarVotosEmpate() {
-        Long pautaId = 1L;
-        Pauta pauta = new Pauta(pautaId, "Desc", "Título", true);
-
-        when(pautaRepository.findById(pautaId)).thenReturn(Optional.of(pauta));
-        when(votoRepository.countByPautaIdAndEscolha(pautaId, EscolhaVoto.SIM)).thenReturn(10L);
-        when(votoRepository.countByPautaIdAndEscolha(pautaId, EscolhaVoto.NAO)).thenReturn(10L);
-
-        ResultadoVotacaoResponseDto resultado = votoService.contabilizarVotos(pautaId);
-
-        assertEquals("EMPATE", resultado.resultado());
-    }
-
-    @Test
-    @DisplayName("Deve contabilizar votos com sucesso - SEM VOTOS")
-    void deveContabilizarVotosSemVotos() {
-        Long pautaId = 1L;
-        Pauta pauta = new Pauta(pautaId, "Desc", "Título", true);
-
-        when(pautaRepository.findById(pautaId)).thenReturn(Optional.of(pauta));
-        when(votoRepository.countByPautaIdAndEscolha(pautaId, EscolhaVoto.SIM)).thenReturn(0L);
-        when(votoRepository.countByPautaIdAndEscolha(pautaId, EscolhaVoto.NAO)).thenReturn(0L);
-
-        ResultadoVotacaoResponseDto resultado = votoService.contabilizarVotos(pautaId);
-
-        assertEquals("SEM VOTOS", resultado.resultado());
+        assertEquals(votosSim, resultado.totalSim());
+        assertEquals(votosNao, resultado.totalNao());
+        assertEquals(votosSim + votosNao, resultado.totalVotos());
+        assertEquals(resultadoEsperado, resultado.resultado());
     }
 
     @Test

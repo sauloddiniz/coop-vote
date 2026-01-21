@@ -37,7 +37,7 @@ public class PautaService {
         List<Pauta> pautas =
                 Optional.ofNullable(aberta)
                         .map(Boolean::parseBoolean)
-                        .map(abertaBoolean -> pautaRepository.findAllByAberta(abertaBoolean))
+                        .map(pautaRepository::findAllByAberta)
                         .orElse(pautaRepository.findAll());
 
         List<PautaResponse> abertas = pautas
@@ -48,7 +48,7 @@ public class PautaService {
 
         List<PautaResponse> fechadas = pautas
                 .stream()
-                .filter(Pauta -> !Pauta.isAberta())
+                .filter(pauta -> !pauta.isAberta())
                 .map(PautaResponse::de)
                 .toList();
 

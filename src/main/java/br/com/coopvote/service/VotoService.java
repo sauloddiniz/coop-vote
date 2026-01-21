@@ -109,7 +109,8 @@ public class VotoService {
         } catch (FeignException.NotFound e) {
             throw new AssociadoNaoAutorizadoException("CPF inválido ou associado não encontrado.");
         } catch (FeignException e) {
-            throw new RuntimeException("Erro ao consultar serviço de validação de CPF.");
+            log.error("Erro ao validar associado: {}", associadoId, e);
+            throw e;
         }
     }
 
