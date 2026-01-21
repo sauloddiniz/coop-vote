@@ -39,7 +39,7 @@ public class FecharPautas {
                         .stream()
                         .map(PautaSessaoVotacao::getPauta)
                         .map(Pauta::setAbertaFalse)
-                        .collect(Collectors.toUnmodifiableList());
+                        .toList();
 
         if (isContemPauta(pautas)) {
             pautaRepository.saveAll(pautas);

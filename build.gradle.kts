@@ -2,12 +2,15 @@ plugins {
     java
     id("org.springframework.boot") version "3.5.9"
     id("io.spring.dependency-management") version "1.1.7"
+    id("org.sonarqube") version "5.1.0.4882"
+    id("jacoco")
 }
 val springCloudVersion by extra("2025.0.1")
 
 group = "br.com"
 version = "0.0.1-SNAPSHOT"
 description = "coop-vote"
+
 
 java {
     toolchain {
@@ -44,7 +47,22 @@ dependencies {
     runtimeOnly("com.oracle.database.jdbc:ojdbc11")
     runtimeOnly("io.micrometer:micrometer-registry-prometheus")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    testRuntimeOnly("com.h2database:h2")
 }
+
+tasks.jacocoTestReport {
+    dependsOn(tasks.test)
+    reports {
+        xml.required.set(true)
+        csv.required.set(false)
+        html.required.set(true)
+    }
+}
+
+tasks.sonar {
+    dependsOn(tasks.jacocoTestReport)
+}
+
 dependencyManagement {
     imports {
         mavenBom("org.springframework.cloud:spring-cloud-dependencies:$springCloudVersion")
@@ -53,4 +71,21 @@ dependencyManagement {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+    systemProperty("spring.profiles.active", "test")
+    finalizedBy(tasks.jacocoTestReport)
+}
+
+sonar {
+    properties {
+        property("sonar.projectKey", "br.com:coop-vote")
+        property("sonar.projectName", "coop-vote")
+        property("sonar.login", "admin")
+        property("sonar.password", "admin")
+        property("sonar.host.url", "http://localhost:9000")
+        property("sonar.language", "java")
+        property("sonar.sources", "src/main/java")
+        property("sonar.binaries", "${layout.buildDirectory.get()}/classes/java/main")
+        property("sonar.coverage.jacoco.xmlReportPaths", "${layout.buildDirectory.get()}/reports/jacoco/test/jacocoTestReport.xml")
+        property("sonar.exclusions", "**/model/**, **/dto/**, **/config/**")
+    }
 }

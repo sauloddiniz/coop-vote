@@ -8,6 +8,7 @@ class CoopVoteApplicationTests {
 
     @Test
     void contextLoads() {
+        // Teste de inicialização do contexto da aplicação
     }
 
 }
