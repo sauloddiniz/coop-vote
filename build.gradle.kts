@@ -54,7 +54,13 @@ tasks.jacocoTestReport {
     dependsOn(tasks.test)
     reports {
         xml.required.set(true)
+        csv.required.set(false)
+        html.required.set(true)
     }
+}
+
+tasks.sonar {
+    dependsOn(tasks.jacocoTestReport)
 }
 
 dependencyManagement {
@@ -66,18 +72,16 @@ dependencyManagement {
 tasks.withType<Test> {
     useJUnitPlatform()
     systemProperty("spring.profiles.active", "test")
+    finalizedBy(tasks.jacocoTestReport)
 }
-
 
 sonar {
     properties {
         property("sonar.projectKey", "br.com:coop-vote")
         property("sonar.projectName", "coop-vote")
         property("sonar.login", "admin")
-        property("sonar.password", "Cumida6897*")
+        property("sonar.password", "admin")
         property("sonar.host.url", "http://localhost:9000")
-        // Use apenas sonar.token. Certifique-se de que o valor está correto.
-        property("sonar.token", "sqp_82a61e30eba51032e498881d8aef618c545ab9d9")
         property("sonar.language", "java")
         property("sonar.sources", "src/main/java")
         property("sonar.binaries", "${layout.buildDirectory.get()}/classes/java/main")
@@ -85,4 +89,3 @@ sonar {
         property("sonar.exclusions", "**/model/**, **/dto/**, **/config/**")
     }
 }
-
